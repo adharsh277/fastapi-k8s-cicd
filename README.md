@@ -1,36 +1,52 @@
-# -Cloud‑Native‑Flask‑App‑Deployment‑using‑Docker‑Azure‑and‑DevOps-
-# 🌐 Cloud‑Native Flask App Deployment using Docker, Azure & DevOps
+# -FastAPI‑Microservice‑Deployment‑with‑Docker‑Kubernetes‑and‑CI/CD-
+# ⚡ FastAPI Microservice Deployment with Docker, Kubernetes (AKS), and GitHub Actions
 
-[![Azure](https://img.shields.io/badge/Azure-DevOps-blue?logo=azure-devops)](https://azure.microsoft.com/products/devops/)
-[![Docker](https://img.shields.io/badge/Docker-Containerized-green?logo=docker)](https://www.docker.com/)
-[![CI/CD](https://img.shields.io/badge/GitHub%20Actions-Automated%20CI%2FCD-orange?logo=githubactions)](https://github.com/features/actions)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-AKS-%2316659F?logo=kubernetes)](https://learn.microsoft.com/azure/aks/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-teal?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-green?logo=docker)](https://www.docker.com/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-AKS-%2316659F?logo=kubernetes)](https://learn.microsoft.com/en-us/azure/aks/)
+[![CI/CD](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-blue?logo=githubactions)](https://github.com/features/actions)
+[![Azure](https://img.shields.io/badge/Azure-Cloud-blue?logo=microsoftazure)](https://azure.microsoft.com/)
 
 ---
 
-## 📖 Project Overview
-A production‑style microservice that:
+## 📌 Project Overview
 
-1. **Flask** serves a REST API (easily switchable to FastAPI).  
-2. **Docker** packages the app into an immutable container image.  
-3. **GitHub Actions** builds & pushes the image, then (optionally) deploys to Azure Kubernetes Service (**AKS**).  
-4. **AKS** runs the containers with auto‑healing, scaling and LoadBalancer exposure.
+This project demonstrates how to build, containerize, and deploy a **FastAPI microservice** using:
 
-> **Live demo** – once deployed:  
-> `http://<your‑aks‑external‑ip>/`
+- 🐳 **Docker** for packaging the app  
+- ☁️ **Azure Kubernetes Service (AKS)** for orchestration  
+- 🔄 **GitHub Actions** for CI/CD automation  
+- ⚙️ **kubectl** for managing deployments  
+- 💻 **GitHub Codespaces** as a development environment
 
 ---
 
-## 🏗️ Architecture
+## ⚙️ Tech Stack
 
-Developer → GitHub Codespace
-│
-├── push → GitHub → Actions → Docker Hub (image)
-│ │
-│ └── kubectl apply → AKS cluster
-│ │
-└── Browser ←──────── LoadBalancer ←─── Service ←── Deployment/Pods
+| Layer                | Tool / Service | Docs |
+|----------------------|----------------|------|
+| **Web Framework**    | [FastAPI](https://fastapi.tiangolo.com/) | Lightning-fast APIs in Python |
+| **Containerization** | [Docker](https://docs.docker.com/) | Package the app |
+| **CI/CD**            | [GitHub Actions](https://docs.github.com/actions) | Automate build & deploy |
+| **Cloud K8s**        | [Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/) | Kubernetes on Azure |
+| **CLI**              | [kubectl](https://kubernetes.io/docs/tasks/tools/) | Manage K8s |
+| **Registry**         | [Docker Hub](https://hub.docker.com/) | Store Docker images |
+
+---
+
+## 🧱 Folder Structure
+
+fastapi-k8s-cicd/
+├── app/
+│ └── main.py # FastAPI app
+├── k8s/
+│ ├── deployment.yaml # Kubernetes Deployment
+│ └── service.yaml # Kubernetes Service
+├── .github/workflows/
+│ └── ci-cd.yml # GitHub Actions workflow
+├── Dockerfile # Docker build file
+├── requirements.txt # Python dependencies
+└── README.md
 
 yaml
 Copy
@@ -38,100 +54,91 @@ Edit
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 How It Works (CI/CD Flow)
 
-| Layer                | Tool / Service | Docs |
-|----------------------|----------------|------|
-| **Language**         | Python 3.10    | <https://www.python.org/> |
-| **Web Framework**    | Flask          | <https://flask.palletsprojects.com/> |
-| **Containerization** | Docker         | <https://docs.docker.com/get-started/> |
-| **Registry**         | Docker Hub     | <https://hub.docker.com/> |
-| **CI/CD**            | GitHub Actions | <https://docs.github.com/actions> |
-| **Orchestrator**     | Kubernetes     | <https://kubernetes.io/docs/home/> |
-| **Managed K8s**      | Azure AKS      | <https://learn.microsoft.com/azure/aks/> |
-| **CLI**              | kubectl        | <https://kubernetes.io/docs/tasks/tools/> |
-| **IaC (optional)**   | Terraform      | <https://developer.hashicorp.com/terraform> |
-
----
-
-## 🚀 Quick Start (Local Dev)
-
-```bash
-# clone & enter repo
-git clone https://github.com/<your‑user>/cloud-native-flask-azure-devops.git
-cd cloud-native-flask-azure-devops
-
-# build & run locally
-docker build -t flask‑demo:local .
-docker run -p 8000:80 flask‑demo:local
-# open http://localhost:8000
-⚙️ CI/CD Pipeline
-Stage	Action Workflow Step	What Happens
-Build	docker/build-push-action	Builds container with Dockerfile
-Push	Docker Hub login + push	Pushes :latest tag to your repo
-Deploy (optional)	az login + kubectl apply	Applies k8s/deployment.yaml and k8s/service.yaml to AKS
-
-Full pipeline file: .github/workflows/ci-cd.yml
-
-🔑 Secrets Required
-Secret name	Used by	Purpose
-DOCKER_USERNAME	Build & push	Docker Hub user
-DOCKER_PASSWORD	Build & push	Docker Hub PAT / password
-(optional) AZURE_CREDENTIALS	Deploy step	Service‑principal JSON for azure/login
-
-📂 Folder Structure
+```mermaid
+graph LR
+A[Push Code to GitHub] --> B[GitHub Actions]
+B --> C[Docker Build & Push to Docker Hub]
+C --> D[Deploy to AKS via kubectl]
+D --> E[Live FastAPI App Running in Cluster]
+📦 Local Development
 bash
 Copy
 Edit
-├── app/
-│   └── main.py          # Flask entry‑point
-├── Dockerfile           # container build
-├── k8s/
-│   ├── deployment.yaml  # K8s Deployment
-│   └── service.yaml     # K8s Service
-└── .github/workflows/
-    └── ci-cd.yml        # GitHub Actions pipeline
-✨ Useful Commands
+# Clone the repo
+git clone https://github.com/<your-username>/fastapi-k8s-cicd.git
+cd fastapi-k8s-cicd
+
+# Run locally with Docker
+docker build -t fastapi-app .
+docker run -p 8000:80 fastapi-app
+
+# Open in browser
+http://localhost:8000
+🔧 Setup for GitHub Actions CI/CD
+🔐 Required Secrets
+Secret Name	Description
+DOCKER_USERNAME	Your Docker Hub username
+DOCKER_PASSWORD	Your Docker Hub password or PAT
+(Optional) AZURE_CREDENTIALS	For Azure CLI login in GitHub
+
+🧪 Kubernetes Commands
 bash
 Copy
 Edit
-# Get AKS credentials locally
-az aks get-credentials -g <rg> -n <cluster>
+# Connect to AKS
+az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
 
-# Deploy YAMLs
+# Deploy to Kubernetes
 kubectl apply -f k8s/
 
-# Watch deployment rollout
-kubectl rollout status deployment/flask-deployment
+# View status
+kubectl get pods
+kubectl get service fastapi-service
 
-# Stream pod logs
-kubectl logs -l app=flask -f
-📚 Further Reading
-Azure DevOps Starter for Containers – https://learn.microsoft.com/azure/devops-project/
+# Stream logs
+kubectl logs -l app=fastapi -f
+🌐 Accessing Your FastAPI App
+Once deployed, find your external IP:
 
-Docker‑Compose vs. Kubernetes – https://docs.docker.com/compose/kubernetes/
+bash
+Copy
+Edit
+kubectl get service fastapi-service
+Then access:
 
-GitHub Actions Marketplace – https://github.com/marketplace?type=actions
+cpp
+Copy
+Edit
+http://<external-ip>:80/
+📚 Learn More
+FastAPI Docs
 
-📝 License
-This project uses the MIT License – see LICENSE for details.
+Docker Official Docs
 
-sql
+Kubernetes Official Docs
+
+Azure AKS Docs
+
+GitHub Actions Docs
+
+📄 License
+This project is licensed under the MIT License.
+
+yaml
 Copy
 Edit
 
 ---
 
-### 🚀 How to Use
+### ✅ How to Use This
 
-1. Copy the block above into a new file called **`README.md`** at your repo root.  
-2. Replace:
-   * `<your‑user>` with your GitHub username  
-   * Any placeholder repo names / paths  
-   * External IP once you have a permanent address or custom domain  
-3. Commit & push:
+1. Replace `<your-username>` with your GitHub username in the `git clone` URL.
+2. Paste the full code above into a `README.md` file inside your repo.
+3. Run:
 
    ```bash
    git add README.md
-   git commit -m "📝 Add full project README with tool links"
+   git commit -m "📄 Added detailed README with tool links and architecture"
    git push origin main
