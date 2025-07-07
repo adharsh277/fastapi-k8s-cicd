@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: fastapi
-        image: your-dockerhub-username/fastapi-app:latest
+        image: aadhi160/fastapi-k8s-cicd:latest
         ports:
         - containerPort: 80
