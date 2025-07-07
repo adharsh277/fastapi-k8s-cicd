@@ -1,0 +1,27 @@
+name: CI/CD FastAPI App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run app (for test)
+        run: |
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          sleep 5
+          curl http://localhost:8000
