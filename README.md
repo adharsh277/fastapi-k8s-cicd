@@ -56,12 +56,7 @@ Edit
 
 ## 🚀 How It Works (CI/CD Flow)
 
-```mermaid
-graph LR
-A[Push Code to GitHub] --> B[GitHub Actions]
-B --> C[Docker Build & Push to Docker Hub]
-C --> D[Deploy to AKS via kubectl]
-D --> E[Live FastAPI App Running in Cluster]
+
 📦 Local Development
 bash
 Copy
