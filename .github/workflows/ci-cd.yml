@@ -29,8 +29,8 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
 
-      - name: Deploy to AKS
-        run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
+#      - name: Deploy to AKS
+ #       run: |
+  #        kubectl apply -f k8s/deployment.yaml
+   #       kubectl apply -f k8s/service.yaml
 
