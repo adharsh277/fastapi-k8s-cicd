@@ -1,27 +1,36 @@
-name: CI/CD FastAPI App
+name: CI/CD FastAPI K8s
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build-and-run:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+    - name: Build and push Docker image
+      run: |
+        docker build -t ghcr.io/${{ github.repository }}:latest .
+        docker push ghcr.io/${{ github.repository }}:latest
 
-      - name: Run app (for test)
-        run: |
-          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-          sleep 5
-          curl http://localhost:8000
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+
